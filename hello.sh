@@ -1,5 +1,7 @@
-VIRTUAL_HOME=~/.transflow
+PROJECT_NAME=transflow
+VIRTUAL_HOME=~/.$PROJECT_NAME
 WORK_HOME=`pwd`
+export PROJECT_NAME
 export VIRTUAL_HOME
 export WORK_HOME
 
@@ -23,6 +25,9 @@ function install() {
     pip install flask-sqlalchemy
     pip install flask-testing
     pip install flask-rq
+    pip install alembic
+    pip install nose
+    pip install uwsgi
 }
 
 function cdvirtual() {
@@ -36,6 +41,8 @@ function cdwork() {
 function cdlib() {
     cd $VIRTUAL_HOME/lib/python2.7/site-packages
 }
+
+source $WORK_HOME/tools/functions.sh
 
 enter
 install
