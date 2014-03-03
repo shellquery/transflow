@@ -15,8 +15,14 @@ function bye() {
 
 function install() {
     pip install flask
-    pip install sqlalchemy
+    pip install psycopg2
+    pip install flexmock
     pip install flask-wtf
+    pip install flask-redis
+    pip install flask-mail
+    pip install flask-sqlalchemy
+    pip install flask-testing
+    pip install flask-rq
 }
 
 function cdvirtual() {
