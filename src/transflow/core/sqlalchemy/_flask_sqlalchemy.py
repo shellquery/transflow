@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-"""在 flask-sqlalchemy 上的定制扩展"""
+from __future__ import absolute_import
 
 import random
 import contextlib

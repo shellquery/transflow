@@ -32,6 +32,7 @@ function install() {
     pip install ipython
     pip install anyjson
     pip install iptools
+    pip install sqlalchemy-compiler
 }
 
 function cdvirtual() {

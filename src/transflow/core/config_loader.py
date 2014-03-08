@@ -61,5 +61,5 @@ def load_config(module_name):
 
 def load(module_name):
     kvs = load_config(module_name)
-    # app.config.update(**kvs)
+    app.config.update(**kvs)
     return kvs
