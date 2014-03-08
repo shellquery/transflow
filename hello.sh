@@ -28,6 +28,8 @@ function install() {
     pip install alembic
     pip install nose
     pip install uwsgi
+    easy_install readline
+    pip install ipython
 }
 
 function cdvirtual() {
