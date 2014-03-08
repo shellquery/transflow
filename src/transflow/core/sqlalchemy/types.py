@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID, INET, CIDR
 from iptools import IpRange
 import uuid
 
-__all__ = ['JSONType', 'HashkeyType', 'LowerString', 'GUID', 'IPv4Address']
+__all__ = ['JSONType', 'LowerString', 'GUID', 'IPv4Address']
 
 
 class LowerString(TypeDecorator):
@@ -37,27 +37,6 @@ class JSONType(TypeDecorator):
     def process_result_value(self, value, dialect):
         if value is not None:
             value = json.loads(value)
-        return value
-
-
-class HashkeyType(TypeDecorator):
-
-    impl = CHAR
-
-    def __init__(self, empty=None):
-        self.__empty = empty
-        super(HashkeyType, self).__init__(56)
-
-    def process_result_value(self, value, dialect):
-        """处理 hashkey == None 时的默认值转换
-
-        自动转换成 self.__empty.
-
-        所以说, null 是一个很独特的状态, 一个没有了就不能重来的状态.
-
-        """
-        if value is None:
-            value = self.__empty
         return value
 
 

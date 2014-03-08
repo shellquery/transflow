@@ -22,4 +22,10 @@ class EngineModule(ModuleType):
         from flask.ext.redis import Redis
         return Redis()
 
+    @locked_cached_property
+    def rq(self):
+        from flask.ext.rq import RQ
+        from flask import current_app
+        return RQ(current_app)
+
 make_module(EngineModule, __name__)

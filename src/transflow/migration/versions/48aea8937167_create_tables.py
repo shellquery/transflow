@@ -13,6 +13,8 @@ down_revision = None
 from alembic import op
 import sqlalchemy as sa
 
+from sqlalchemy.dialects.postgresql import ENUM
+
 
 def upgrade():
     sa.Sequence('user_id_seq').create(bind=op.get_bind())
@@ -25,6 +27,10 @@ def upgrade():
                   index=True, nullable=False),
         sa.Column('unikey', sa.String(length=256),
                   unique=True, index=True, nullable=False),
+        sa.Column('avatar', sa.String(length=1024), nullable=False),
+        sa.Column('gender',
+                  sa.Enum(u'male', u'femail', u'unknown', name='user_gender_enum'),
+                  nullable=False),
         sa.Column('date_created', sa.DateTime(timezone=True),
                   server_default=sa.func.current_timestamp(),
                   index=True, nullable=True),
@@ -35,3 +41,4 @@ def upgrade():
 def downgrade():
     op.drop_table('account')
     sa.Sequence('user_id_seq').drop(bind=op.get_bind())
+    ENUM(name='user_gender_enum').drop(op.get_bind(), checkfirst=False)

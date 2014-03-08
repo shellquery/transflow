@@ -10,4 +10,3 @@ with app.app_context():
     from transflow.core import config_loader
     config_loader.load('transflow.config')
     from transflow.models import UserModel
-    print UserModel.query.all()

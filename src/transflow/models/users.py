@@ -20,5 +20,8 @@ class UserModel(db.Model):
                          index=True)
     unikey = db.Column('unikey', db.String(256), nullable=False,
                        index=True)
+    gender = db.Column('gender', db.Enum('male', 'femail', 'unknown',
+                                         name='user_gender_enum'))
+    avatar = db.Column('avatar', db.String(1024), nullable=False)
     date_created = db.Column('date_created', db.DateTime(timezone=True),
                              server_default=db.func.current_timestamp())
