@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 import os
 import re
 
+from flask import current_app as app
+
 
 __all__ = ['load']
 
@@ -31,7 +33,7 @@ def is_dir(filename):
     leaf = os.path.split(filename)[1]
     return re.match(r'^[a-z_]+$', leaf)
 
-def load(module_name):
+def load_config(module_name):
     module = load_module(module_name)
     file_path = module.__file__
     if is_pyfile(file_path):
@@ -46,7 +48,18 @@ def load(module_name):
     for f in files:
         sub_path = os.path.join(dir_path, f)
         if is_pyfile(sub_path):
-            kvs[f.split('.')[0].upper()] = load(module_name + '.' + f.split('.')[0])
-        if is_dir(sub_path):
-            kvs[f.upper()] = load(module_name + '.' + f)
+            prefix = f.split('.')[0].upper() + '_'
+            submod = module_name + '.' + f.split('.')[0]
+        elif is_dir(sub_path):
+            prefix = f.upper() + '_'
+            submod = module_name + '.' + f
+        else:
+            continue
+        for k, v in load_config(submod).items():
+            kvs[prefix + k] = v
+    return kvs
+
+def load(module_name):
+    kvs = load_config(module_name)
+    # app.config.update(**kvs)
     return kvs

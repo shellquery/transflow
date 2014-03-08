@@ -30,6 +30,8 @@ function install() {
     pip install uwsgi
     easy_install readline
     pip install ipython
+    pip install anyjson
+    pip install iptools
 }
 
 function cdvirtual() {

@@ -1,2 +1,3 @@
-STORE_URL='redis://localhost:6379/1'
-QUEUE_URL='redis://localhost:6379/2'
+HOST='localhost'
+PORT=6379
+DB=1

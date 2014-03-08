@@ -7,6 +7,6 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route('/')
-def hello():
-    return "Hello, World!"
+with app.app_context():
+    from transflow.models import UserModel
+    print UserModel.query.all()
