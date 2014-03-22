@@ -10,10 +10,11 @@ from datetime import datetime
 from flask import (
     views, request, render_template,
     redirect, url_for, flash,
-    Forbidden, Blueprint, session,
+    Blueprint, session,
     current_app as app)
 from flask.helpers import locked_cached_property
-from flask.ext.wtforms import Form
+from flask.ext.wtf import Form
+from werkzeug.exceptions import Forbidden
 from wtforms import fields, validators, ValidationError
 from wtforms.fields import html5
 

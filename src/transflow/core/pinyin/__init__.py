@@ -4,17 +4,21 @@ from __future__ import unicode_literals
 
 
 import re
-import sys
+import types
 import string
 import os.path
 
+from transflow.core.utils import make_module
 
-class PinYin(object):
+
+class PinYin(types.ModuleType):
 
     alnum = string.digits + string.letters
 
-    def __init__(self, dict_file='/word.data'):
+    def __init__(self, *args, **kwargs):
+        super(PinYin, self).__init__(*args, **kwargs)
         self.word_dict = {}
+        dict_file = kwargs.get('dict_file', '/word.data')
         self.dict_file = (
             os.path.dirname(os.path.abspath(__file__)) + dict_file)
         self.load_word()
@@ -104,6 +108,4 @@ class PinYin(object):
         return ps
 
 
-old_modules = sys.modules[__name__]
-sys.modules[__name__] = pinyin = PinYin()
-pinyin.__dict__['__builtins__'] = __builtins__
+make_module(PinYin, __name__)

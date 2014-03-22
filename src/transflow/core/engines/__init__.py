@@ -6,7 +6,7 @@ from types import ModuleType
 
 from flask.helpers import locked_cached_property
 
-from .utils import make_module
+from ..utils import make_module
 
 
 class EngineModule(ModuleType):
@@ -14,7 +14,7 @@ class EngineModule(ModuleType):
     @locked_cached_property
     def db(self):
         from flask import current_app
-        from transflow.core.sqlalchemy import SQLAlchemy
+        from transflow.core._sqlalchemy import SQLAlchemy
         return SQLAlchemy(current_app)
 
     @locked_cached_property

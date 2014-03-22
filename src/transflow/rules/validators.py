@@ -6,7 +6,7 @@ import re
 
 from wtforms.validators import Regexp, Length
 
-from liyan.core import pinyin
+from transflow.core import pinyin
 
 __all__ = ['Tkey', 'Unikey', 'PinyinLength']
 
