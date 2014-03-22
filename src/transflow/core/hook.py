@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from flask import g
 from sqlalchemy import event
 
 from .engines import db
@@ -161,22 +160,6 @@ class EntityHook(object):
 
 
 class CommonEntityHook(EntityHook):
-
-    def update_user_count(
-            self, children, query, ukey_name, counter_name):
-        '''
-        异步同步社区的用户统计数据
-        '''
-        ukeys = set([])
-        for child in children:
-            ukeys.add(getattr(child, ukey_name))
-        ukeys = list(ukeys)
-        result = []
-        for ukey in ukeys:
-            result.append(query.filter_by(**{ukey_name: ukey}).count())
-        from guokr.platform.backends import community as b_community
-        b_community.sync_counter.update(
-            ukey=ukeys, count=result, counter_name=counter_name, _delay=True)
 
     def update_children_count(
             self, children, parent_name, children_name, counter_name):
