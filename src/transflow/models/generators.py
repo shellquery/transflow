@@ -12,7 +12,8 @@ from transflow.core.utils import make_module
 
 class GeneratorModule(ModuleType):
 
-    keys = {'user': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r'}
+    keys = {'user': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'email_temp': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r'}
 
     def __getattr__(self, key):
         if key in self.keys:

@@ -23,6 +23,11 @@ class EngineModule(ModuleType):
         return Redis()
 
     @locked_cached_property
+    def mail(self):
+        from flask.ext.mail import Mail
+        return Mail()
+
+    @locked_cached_property
     def rq(self):
         from flask.ext.rq import RQ
         from flask import current_app

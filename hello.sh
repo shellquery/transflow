@@ -26,13 +26,14 @@ function install() {
     pip install flask-testing
     pip install flask-rq
     pip install alembic
+    pip install pyquery
+    pip install rsa
     pip install nose
     pip install uwsgi
     easy_install readline
     pip install ipython
     pip install anyjson
     pip install iptools
-    pip install sqlalchemy-compiler
 }
 
 function cdvirtual() {
