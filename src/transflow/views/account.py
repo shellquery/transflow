@@ -206,7 +206,7 @@ class RegisterView(views.MethodView):
             email=et.email,
             password_hash=password_hash)
         flash('注册成功')
-        response = redirect(url_for('www.home.index'))
+        response = redirect(url_for('home.index'))
         make_login(response, user)
         return response
 
@@ -247,7 +247,7 @@ class LoginView(views.MethodView):
         user.date_last_signed_in = datetime.now()
         db.session.commit()
         flash('登录成功')
-        response = redirect(url_for('www.home.index'))
+        response = redirect(url_for('home.index'))
         make_login(response, user)
         return response
 
@@ -296,7 +296,7 @@ class ChangePasswordView(views.MethodView):
         user.password_hash = form.new_password_hash
         db.session.commit()
         flash('修改成功')
-        return redirect(url_for('www.home.index'))
+        return redirect(url_for('home.index'))
 
 
 blueprint.add_url_rule(
