@@ -8,8 +8,6 @@ from datetime import timedelta
 from werkzeug.datastructures import CallbackDict
 from flask.sessions import SessionInterface, SessionMixin
 
-from transflow.core.engines import redis
-
 
 class RedisSession(CallbackDict, SessionMixin):
 
@@ -26,7 +24,7 @@ class RedisSessionInterface(SessionInterface):
     serializer = json
     session_class = RedisSession
 
-    def __init__(self, prefix='session:'):
+    def __init__(self, redis, prefix='session:'):
         self.redis = redis
         self.prefix = prefix
 
@@ -52,6 +50,7 @@ class RedisSessionInterface(SessionInterface):
     def save_session(self, app, session, response):
         domain = self.get_cookie_domain(app)
         if not session:
+            print dir(self.redis)
             self.redis.delete(self.prefix + session.sid)
             if session.modified:
                 response.delete_cookie(app.session_cookie_name,

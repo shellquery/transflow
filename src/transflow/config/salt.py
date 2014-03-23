@@ -1,1 +1,1 @@
-REGISTER_PASSWORD_SALT = 'wtf-password-salt'
+ACCOUNT_PASSWORD = 'wtf-password-salt'

@@ -13,13 +13,13 @@ class TransflowRequest(Request):
 
     @locked_cached_property
     def user(self):
-        from transflow.core.users import user_meta, user_meta_notexists
+        from transflow.core.users import user_meta
         from transflow.core.tokens import AccessToken
         user_id = self.cookies.get('sign_in_user_id')
         access_token = self.cookies.get('sign_in_access_token')
         if not user_id or not access_token:
-            return user_meta_notexists
+            return {}
         if user_id != AccessToken.get(access_token):
-            return user_meta_notexists
+            return {}
         user = user_meta(user_id)
         return user

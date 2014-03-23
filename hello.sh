@@ -19,6 +19,7 @@ function install() {
     pip install flask
     pip install psycopg2
     pip install flexmock
+    pip install redis
     pip install flask-wtf
     pip install flask-redis
     pip install flask-mail

@@ -5,7 +5,7 @@ from __future__ import absolute_import
 
 from sqlalchemy.ext.hybrid import Comparator
 
-from tranflow.core.engines import db
+from transflow.core.engines import db
 
 
 __all__ = ['pad_left', 'CaseInsensitiveComparator']

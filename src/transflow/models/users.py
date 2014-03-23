@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from flask import app
+from flask import current_app as app
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from transflow.core.engines import db
@@ -11,7 +11,7 @@ from transflow.core.db import CaseInsensitiveComparator
 from . import generators
 
 
-__all__ = ['UserModel']
+__all__ = ['UserModel', 'EmailTempModel']
 
 
 class UserModel(db.Model):
@@ -71,7 +71,7 @@ class UserModel(db.Model):
             date_created=self.date_created)
 
 
-class EmailTemp(db.Model):
+class EmailTempModel(db.Model):
     id = db.Column('id', db.String(12), nullable=False,
                    primary_key=True, default=generators.email_temp)
     email = db.Column('email', db.String(256), nullable=False,

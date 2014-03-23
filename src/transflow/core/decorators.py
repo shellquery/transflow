@@ -10,8 +10,8 @@ from flask import request, redirect, url_for
 def login_required(fn):
     @wraps(fn)
     def _fn(*args, **kwargs):
-        if request.account:
+        if request.user:
             return fn(*args, **kwargs)
         else:
-            return redirect(url_for('www.account.login'))
+            return redirect(url_for('account.login'))
     return _fn

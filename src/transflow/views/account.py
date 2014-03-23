@@ -21,7 +21,7 @@ from wtforms.fields import html5
 from transflow.core.engines import mail, db, redis
 from transflow.core.signature import shake, decrypt
 from transflow.core.decorators import login_required
-from transflow.core.token import AccessToken
+from transflow.core.tokens import AccessToken
 from transflow.blueprints import blueprint_www
 from transflow.rules.validators import PinyinLength
 from transflow.models import UserModel, EmailTempModel
@@ -109,7 +109,7 @@ class RSAFormMixin(object):
         '公钥',
         validators=[validators.Required()])
 
-    RSA_PREFIX = ''
+    RSA_PREFIX = 'RSA-FORM-KEY'
 
     @locked_cached_property
     def privkey(self):
@@ -162,6 +162,8 @@ def make_login(response, user, permanent=True):
 
 
 class RegisterView(views.MethodView):
+
+    template = 'account/register.html'
 
     class RegisterForm(Form, RSAPasswordFormMixin):
         realname = fields.StringField(
@@ -299,13 +301,16 @@ class ChangePasswordView(views.MethodView):
 
 blueprint.add_url_rule(
     '/fill_email',
-    FillEmailView.as_view(b'fill_email'))
+    view_func=FillEmailView.as_view(b'fill_email'))
 blueprint.add_url_rule(
     '/confirm_email',
-    ConfirmEmailView.as_view(b'confirm_email'))
+    view_func=ConfirmEmailView.as_view(b'confirm_email'))
 blueprint.add_url_rule(
     '/register',
-    RegisterView.as_view(b'register'))
+    view_func=RegisterView.as_view(b'register'))
+blueprint.add_url_rule(
+    '/login',
+    view_func=LoginView.as_view(b'login'))
 blueprint.add_url_rule(
     '/change_password',
-    RegisterView.as_view(b'register'))
+    view_func=RegisterView.as_view(b'change_password'))

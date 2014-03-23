@@ -6,7 +6,7 @@ from types import ModuleType
 
 from flask.helpers import locked_cached_property
 
-from ..utils import make_module
+from transflow.core.utils import make_module
 
 
 class EngineModule(ModuleType):
@@ -19,8 +19,9 @@ class EngineModule(ModuleType):
 
     @locked_cached_property
     def redis(self):
+        from flask import current_app
         from flask.ext.redis import Redis
-        return Redis()
+        return Redis(current_app)
 
     @locked_cached_property
     def mail(self):
