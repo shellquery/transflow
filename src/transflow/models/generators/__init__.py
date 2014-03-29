@@ -13,7 +13,13 @@ from transflow.core.utils import make_module
 class GeneratorModule(ModuleType):
 
     keys = {'user': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
-            'email_temp': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r'}
+            'email_temp': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'company': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'project': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'task': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'cross': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'document': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            }
 
     def __getattr__(self, key):
         if key in self.keys:
