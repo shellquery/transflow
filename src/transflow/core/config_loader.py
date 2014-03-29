@@ -40,7 +40,6 @@ def load_config(module_name):
         return load_file(module)
     kvs = {}
     kvs.update(**load_file(module))
-    print file_path
     if not is_initfile(file_path):
         return kvs
     dir_path = os.path.split(file_path)[0]

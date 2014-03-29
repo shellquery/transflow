@@ -5,25 +5,27 @@ from __future__ import unicode_literals
 from transflow.core.engines import db
 
 from . import generators
+from .properties import extend_properties
 
 
 __all__ = ['TaskModel', 'CrossModel',
            'TaskOutCrossModel', 'CrossInTaskModel']
 
 
+@extend_properties
 class TaskModel(db.Model):
     __tablename__ = 'task'
 
     id = db.Column(
         'id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True, default=generators.task)
     is_start = db.Column(
         'is_start',
         db.Boolean(), nullable=False,
         server_default='false')
     is_end = db.Column(
-        'is_start',
+        'is_end',
         db.Boolean(), nullable=False,
         server_default='false')
     is_ready = db.Column(
@@ -63,6 +65,7 @@ class TaskModel(db.Model):
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
+    print '*' * 100
 
 
 class CrossModel(db.Model):
@@ -78,8 +81,8 @@ class CrossModel(db.Model):
         server_default=db.func.current_timestamp())
 
 
-class CrossStorageModel(db.Model):
-    __tablename__ = 'cross_storage'
+class CrossDocumentModel(db.Model):
+    __tablename__ = 'cross_document'
 
     cross_id = db.Column(
         'cross_id',
@@ -146,3 +149,29 @@ class CrossInTaskModel(db.Model):
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
+
+
+class ProperyKey(db.Model):
+    key = db.Column(
+        'key',
+        db.String(256), nullable=False,
+        primary_key=True)
+    kind = db.Column(
+        'kind',
+        db.String(64), nullable=False,
+        primary_key=True)
+    parameters = db.Column(
+        'paramters',
+        )
+    name = db.Column(
+        'name',
+        db.String(256), nullable=False)
+    description = db.Column(
+        'description',
+        db.String(1024), nullable=True)
+
+class PropertyTemplate(db.Model):
+    key = db.Column(
+        'key',
+        db.String(256), nullable=False,
+        primary_key=True)

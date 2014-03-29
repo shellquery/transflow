@@ -15,3 +15,11 @@ def login_required(fn):
         else:
             return redirect(url_for('account.login'))
     return _fn
+
+class classproperty(object):
+
+    def __init__(self, getter):
+        self.getter= getter
+
+    def __get__(self, instance, owner):
+        return self.getter(owner)

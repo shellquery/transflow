@@ -19,6 +19,8 @@ class GeneratorModule(ModuleType):
             'task': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
             'cross': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
             'document': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'member': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
+            'staff': '20jMQLgM68J2UBhhjWb1bA4oHdES19SWAODTeYtT25r',
             }
 
     def __getattr__(self, key):

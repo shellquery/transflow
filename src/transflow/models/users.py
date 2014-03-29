@@ -9,17 +9,18 @@ from transflow.core.engines import db
 from transflow.core.db import CaseInsensitiveComparator
 
 from . import generators
+from .properties import extend_properties
 
 
 __all__ = ['UserModel', 'EmailTempModel']
 
-
+@extend_properties
 class UserModel(db.Model):
-    __tablename__ = 'account'
+    __tablename__ = 'user'
 
     id = db.Column(
         'id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True, default=generators.user)
     email = db.Column(
         'email',
@@ -72,7 +73,7 @@ class UserModel(db.Model):
 
 
 class EmailTempModel(db.Model):
-    id = db.Column('id', db.String(12), nullable=False,
+    id = db.Column('id', db.String(40), nullable=False,
                    primary_key=True, default=generators.email_temp)
     email = db.Column('email', db.String(256), nullable=False,
                       unique=True, index=True)
