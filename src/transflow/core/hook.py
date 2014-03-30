@@ -172,9 +172,11 @@ class CommonEntityHook(EntityHook):
             if not parent:
                 continue
             if parent and parent not in parents:
-                setattr(parent, counter_name,
-                        getattr(parent, children_name)
-                        .order_by(None).count())
+                childrens_count = (
+                    getattr(parent, children_name)
+                    .order_by(None)
+                    .count())
+                setattr(parent, counter_name, childrens_count)
                 parents.add(parent)
 
     def increase_children_count(

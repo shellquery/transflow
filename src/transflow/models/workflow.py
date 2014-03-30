@@ -8,8 +8,9 @@ from . import generators
 from .properties import extend_properties
 
 
-__all__ = ['TaskModel', 'CrossModel',
-           'TaskOutCrossModel', 'CrossInTaskModel']
+__all__ = ['TaskModel', 'CrossModel', 'DocumentModel',
+           'CrossDocumentModel', 'TaskOutCrossModel',
+           'CrossInTaskModel']
 
 
 @extend_properties
@@ -20,14 +21,6 @@ class TaskModel(db.Model):
         'id',
         db.String(40), nullable=False,
         primary_key=True, default=generators.task)
-    is_start = db.Column(
-        'is_start',
-        db.Boolean(), nullable=False,
-        server_default='false')
-    is_end = db.Column(
-        'is_end',
-        db.Boolean(), nullable=False,
-        server_default='false')
     is_ready = db.Column(
         'is_ready',
         db.Boolean(), nullable=False,
@@ -42,10 +35,10 @@ class TaskModel(db.Model):
         server_default='0')
     user_id = db.Column(
         'user_id',
-        db.String(12), nullable=False)
+        db.String(40), nullable=False)
     project_id = db.Column(
         'project_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     name = db.Column(
         'name',
@@ -65,7 +58,23 @@ class TaskModel(db.Model):
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
-    print '*' * 100
+
+    @classmethod
+    def __declare_last__(cls):
+        cls.down_crosses = db.relationship(
+            'CrossModel',
+            secondary=TaskOutCrossModel.__table__,
+            backref=db.backref(
+                'up_tasks',
+                innerjoin=True,
+                order_by=TaskOutCrossModel.date_created,
+                lazy='subquery'),
+            primaryjoin=TaskModel.id == TaskOutCrossModel.task_id,
+            secondaryjoin=TaskOutCrossModel.cross_id == CrossModel.id,
+            order_by=TaskOutCrossModel.date_created,
+            foreign_keys=[TaskOutCrossModel.task_id,
+                          TaskOutCrossModel.cross_id],
+            passive_deletes='all', lazy='subquery')
 
 
 class CrossModel(db.Model):
@@ -73,12 +82,55 @@ class CrossModel(db.Model):
 
     id = db.Column(
         'id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True, default=generators.cross)
+    project_id = db.Column(
+        'project_id',
+        db.String(40), nullable=False,
+        index=True)
+    is_start = db.Column(
+        'is_start',
+        db.Boolean(), nullable=False,
+        server_default='false')
+    is_end = db.Column(
+        'is_end',
+        db.Boolean(), nullable=False,
+        server_default='false')
     date_created = db.Column(
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
+
+    @classmethod
+    def __declare_last__(cls):
+        cls.documents = db.relationship(
+            'DocumentModel',
+            secondary=CrossDocumentModel.__table__,
+            backref=db.backref(
+                'crosses',
+                innerjoin=True,
+                order_by=CrossDocumentModel.date_created.desc(),
+                lazy='dynamic'),
+            primaryjoin=CrossModel.id == CrossDocumentModel.cross_id,
+            secondaryjoin=CrossDocumentModel.document_id == DocumentModel.id,
+            order_by=CrossDocumentModel.date_created.desc(),
+            foreign_keys=[CrossDocumentModel.cross_id,
+                          CrossDocumentModel.document_id],
+            passive_deletes='all', lazy='dynamic')
+
+        cls.down_tasks = db.relationship(
+            'TaskModel',
+            secondary=CrossInTaskModel.__table__,
+            backref=db.backref(
+                'up_cross',
+                innerjoin=True,
+                uselist=False),
+            primaryjoin=CrossModel.id == CrossInTaskModel.cross_id,
+            secondaryjoin=CrossInTaskModel.task_id == TaskModel.id,
+            order_by=CrossInTaskModel.date_created,
+            foreign_keys=[CrossInTaskModel.cross_id,
+                          CrossInTaskModel.task_id],
+            passive_deletes='all', lazy='subquery')
 
 
 class CrossDocumentModel(db.Model):
@@ -86,11 +138,11 @@ class CrossDocumentModel(db.Model):
 
     cross_id = db.Column(
         'cross_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     document_id = db.Column(
         'document_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     date_created = db.Column(
         'date_created',
@@ -103,8 +155,12 @@ class DocumentModel(db.Model):
 
     id = db.Column(
         'id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True, default=generators.document)
+    project_id = db.Column(
+        'project_id',
+        db.String(40), nullable=False,
+        index=True)
     name = db.Column(
         'name',
         db.Unicode(256), nullable=False)
@@ -122,11 +178,11 @@ class TaskOutCrossModel(db.Model):
 
     task_id = db.Column(
         'task_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     cross_id = db.Column(
         'cross_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     date_created = db.Column(
         'date_created',
@@ -139,39 +195,13 @@ class CrossInTaskModel(db.Model):
 
     cross_id = db.Column(
         'cross_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     task_id = db.Column(
         'task_id',
-        db.String(12), nullable=False,
+        db.String(40), nullable=False,
         primary_key=True)
     date_created = db.Column(
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
-
-
-class ProperyKey(db.Model):
-    key = db.Column(
-        'key',
-        db.String(256), nullable=False,
-        primary_key=True)
-    kind = db.Column(
-        'kind',
-        db.String(64), nullable=False,
-        primary_key=True)
-    parameters = db.Column(
-        'paramters',
-        )
-    name = db.Column(
-        'name',
-        db.String(256), nullable=False)
-    description = db.Column(
-        'description',
-        db.String(1024), nullable=True)
-
-class PropertyTemplate(db.Model):
-    key = db.Column(
-        'key',
-        db.String(256), nullable=False,
-        primary_key=True)

@@ -5,8 +5,6 @@ from __future__ import unicode_literals
 from types import ModuleType
 
 from transflow.core.engines import db
-from transflow.core.db import pad_left
-from transflow.contribs import feistel, base62
 from transflow.core.utils import make_module
 
 
@@ -28,12 +26,17 @@ class GeneratorModule(ModuleType):
             return self.generator(key)
         return super(GeneratorModule, self).__getattr__(key)
 
+    def nextorigid(self, key):
+        return db.session.execute(db.Sequence('%s_id_seq' % key))
+
     def nextval(self, key):
-        orig_id = db.session.execute(db.Sequence('%s_id_seq' % key))
+        from transflow.core.db import pad_left
+        from transflow.contribs import feistel, base62
+        orig_id = self.nextorigid(key)
         fei = feistel.Feistel(self.keys[key])
         return pad_left(base62.base62_encode(fei.encrypt(orig_id)))
 
     def generator(self, key):
-        return lambda: self.nextval(key)
+        return lambda : self.nextval(key)
 
 make_module(GeneratorModule, __name__)

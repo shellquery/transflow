@@ -31,9 +31,6 @@ class UserModel(db.Model):
     introduction = db.Column(
         'introduction',
         db.Unicode(1024), nullable=True)
-    unikey = db.Column(
-        'unikey',
-        db.String(256), nullable=False, index=True)
     password_hash = db.Column(
         'password_hash', db.CHAR(40), nullable=False)
     gender = db.Column(
@@ -66,7 +63,6 @@ class UserModel(db.Model):
             realname=self.realname,
             email=self.email,
             introduction=self.introduction,
-            unikey=self.unikey,
             gender=self.gender,
             avatar=self.avatar,
             date_created=self.date_created)
