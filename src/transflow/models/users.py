@@ -6,7 +6,7 @@ from flask import current_app as app
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from transflow.core.engines import db
-from transflow.core.db import CaseInsensitiveComparator
+from transflow.core.dbutils import CaseInsensitiveComparator
 
 from . import generators
 from .properties import extend_properties

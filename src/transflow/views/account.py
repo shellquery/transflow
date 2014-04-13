@@ -18,7 +18,7 @@ from werkzeug.exceptions import Forbidden
 from wtforms import fields, validators, ValidationError
 from wtforms.fields import html5
 
-from transflow.core.engines import mail, db, redis
+from transflow.core.engines import mail, redis, db
 from transflow.core.signature import shake, decrypt
 from transflow.core.decorators import login_required
 from transflow.core.tokens import AccessToken

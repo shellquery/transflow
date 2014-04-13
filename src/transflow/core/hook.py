@@ -176,6 +176,7 @@ class CommonEntityHook(EntityHook):
                     getattr(parent, children_name)
                     .order_by(None)
                     .count())
+                print child, parent, counter_name, childrens_count
                 setattr(parent, counter_name, childrens_count)
                 parents.add(parent)
 

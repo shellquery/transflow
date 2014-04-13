@@ -62,7 +62,7 @@ def add_project_document(project, name='test', url='http://test'):
     document = DocumentModel(
         name=name,
         url=url)
-    project.document.append(document)
+    project.documents.append(document)
     return document
 
 def add_cross_document(cross, document):

@@ -30,7 +30,7 @@ class GeneratorModule(ModuleType):
         return db.session.execute(db.Sequence('%s_id_seq' % key))
 
     def nextval(self, key):
-        from transflow.core.db import pad_left
+        from transflow.core.dbutils import pad_left
         from transflow.contribs import feistel, base62
         orig_id = self.nextorigid(key)
         fei = feistel.Feistel(self.keys[key])

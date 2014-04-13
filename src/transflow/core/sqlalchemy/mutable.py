@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-"""sqlalchemy.ext.mutable 扩展"""
+from __future__ import absolute_import
 
 from sqlalchemy.ext.mutable import Mutable, MutableDict
 

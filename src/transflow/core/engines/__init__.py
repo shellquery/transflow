@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 from types import ModuleType
 
@@ -14,8 +15,13 @@ class EngineModule(ModuleType):
     @locked_cached_property
     def db(self):
         from flask import current_app
-        from transflow.core._sqlalchemy import SQLAlchemy
-        return SQLAlchemy(current_app)
+        from transflow.core.sqlalchemy import SQLAlchemy
+        try:
+            result = SQLAlchemy(current_app)
+        except Exception, ex:
+            import traceback
+            traceback.print_exc()
+        return result
 
     @locked_cached_property
     def redis(self):
