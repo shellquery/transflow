@@ -176,12 +176,11 @@ class CommonEntityHook(EntityHook):
                     getattr(parent, children_name)
                     .order_by(None)
                     .count())
-                print child, parent, counter_name, childrens_count
                 setattr(parent, counter_name, childrens_count)
                 parents.add(parent)
 
     def increase_children_count(
-            children, parent_name, counter_name, sign):
+            self, children, parent_name, counter_name, sign):
         '''
         增量式更新统计表的count值，效率高，缺乏一致性
         '''

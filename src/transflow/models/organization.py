@@ -56,6 +56,7 @@ class CompanyModel(db.Model):
         passive_deletes='all',
         lazy='dynamic')
 
+
 @extend_properties
 class ProjectModel(db.Model):
     __tablename__ = 'project'
@@ -81,6 +82,18 @@ class ProjectModel(db.Model):
         server_default=db.func.current_timestamp())
     members_count = db.Column(
         'members_count',
+        db.Integer(), nullable=False,
+        default=0, server_default='0')
+    tasks_count = db.Column(
+        'tasks_count',
+        db.Integer(), nullable=False,
+        default=0, server_default='0')
+    crosses_count = db.Column(
+        'crosses_count',
+        db.Integer(), nullable=False,
+        default=0, server_default='0')
+    documents_count = db.Column(
+        'documents_count',
         db.Integer(), nullable=False,
         default=0, server_default='0')
 
@@ -110,7 +123,8 @@ class ProjectModel(db.Model):
 
     cross_start = db.relationship(
         'CrossModel',
-        primaryjoin='and_(CrossModel.project_id==ProjectModel.id, CrossModel.is_start)',
+        primaryjoin=('and_(CrossModel.project_id==ProjectModel.id, '
+                     'CrossModel.is_start)'),
         foreign_keys='[CrossModel.project_id]',
         passive_deletes='all',
         uselist=False,
@@ -118,7 +132,8 @@ class ProjectModel(db.Model):
 
     cross_end = db.relationship(
         'CrossModel',
-        primaryjoin='and_(CrossModel.project_id==ProjectModel.id, CrossModel.is_end)',
+        primaryjoin=('and_(CrossModel.project_id==ProjectModel.id, '
+                     'CrossModel.is_end)'),
         foreign_keys='[CrossModel.project_id]',
         passive_deletes='all',
         uselist=False,
@@ -131,7 +146,7 @@ class ProjectModel(db.Model):
         foreign_keys='[TaskModel.project_id]',
         passive_deletes='all',
         lazy='dynamic')
-    
+
 
 @extend_properties
 class MemberModel(db.Model):
@@ -153,6 +168,7 @@ class MemberModel(db.Model):
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
+
 
 @extend_properties
 class StaffModel(db.Model):

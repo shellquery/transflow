@@ -9,7 +9,6 @@ from .transflow_testing import (
     add_project_cross, add_project_document, add_cross_document,
     add_project_member, add_company_staff, connect_ct, connect_tc)
 
-from transflow.models import StaffModel
 
 class ModelTestCase(TestCase):
 
@@ -36,3 +35,26 @@ class ModelTestCase(TestCase):
         db.session.commit()
         self.assertEquals(self.company.staffs.count(), 2)
         self.assertEquals(self.company.staffs_count, 2)
+
+    def test_sequence_task(self):
+        task1 = add_project_task(self.project, self.user, name='test1')
+        task2 = add_project_task(self.project, self.user, name='test2')
+        task3 = add_project_task(self.project, self.user, name='test3')
+        cross1 = add_project_cross(self.project, is_start=True)
+        cross2 = add_project_cross(self.project)
+        cross3 = add_project_cross(self.project)
+        cross4 = add_project_cross(self.project, is_end=True)
+        connect_ct(cross1, task1)
+        connect_tc(task1, cross2)
+        connect_ct(cross2, task2)
+        connect_tc(task2, cross3)
+        connect_ct(cross3, task3)
+        connect_tc(task3, cross4)
+        document1 = add_project_document(self.project)
+        document2 = add_project_document(self.project)
+        add_cross_document(cross1, document1)
+        add_cross_document(cross1, document2)
+        db.session.commit()
+        self.assertEquals(self.project.tasks_count, 3)
+        self.assertEquals(self.project.crosses_count, 4)
+        self.assertEquals(self.project.documents_count, 2)

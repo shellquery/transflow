@@ -14,6 +14,8 @@ from alembic import op
 import sqlalchemy as sa
 from transflow.core.sqlalchemy.types import JSONType
 
+from sqlalchemy.dialects.postgresql import ENUM
+
 
 def upgrade():
     sa.Sequence('task_id_seq').create(bind=op.get_bind())
@@ -91,9 +93,12 @@ def upgrade():
     op.create_table(
         'task',
         sa.Column('id', sa.String(length=40), nullable=False),
-        sa.Column('is_ready', sa.Boolean(), server_default=u'false', nullable=False),
-        sa.Column('is_finished', sa.Boolean(), server_default=u'false', nullable=False),
-        sa.Column('progress', sa.Integer(), server_default=u'0', nullable=False),
+        sa.Column('is_ready', sa.Boolean(),
+                  server_default='false', nullable=False),
+        sa.Column('is_finished', sa.Boolean(),
+                  server_default='false', nullable=False),
+        sa.Column('progress', sa.Integer(),
+                  server_default=u'0', nullable=False),
         sa.Column('user_id', sa.String(length=40), nullable=False),
         sa.Column('project_id', sa.String(length=40), nullable=False),
         sa.Column('name', sa.Unicode(length=256), nullable=False),
@@ -103,8 +108,8 @@ def upgrade():
         sa.Column('date_end', sa.DateTime(timezone=True),
                   server_default=sa.func.current_timestamp(), nullable=True),
         sa.Column('date_created', sa.DateTime(timezone=True),
-                  server_default=sa.func.current_timestamp(), nullable=True),
-        sa.PrimaryKeyConstraint('id', 'project_id')
+                  server_default=sa.func.current_timestamp(), nullable=False),
+        sa.PrimaryKeyConstraint('id')
     )
     op.create_table(
         'project',
@@ -114,15 +119,24 @@ def upgrade():
         sa.Column('name', sa.Unicode(length=256), nullable=False),
         sa.Column('date_created', sa.DateTime(timezone=True),
                   server_default=sa.func.current_timestamp(), nullable=True),
-        sa.Column('members_count', sa.Integer(), server_default=u'0', nullable=False),
+        sa.Column('members_count', sa.Integer(),
+                  server_default=u'0', nullable=False),
+        sa.Column('tasks_count', sa.Integer(),
+                  server_default=u'0', nullable=False),
+        sa.Column('crosses_count', sa.Integer(),
+                  server_default=u'0', nullable=False),
+        sa.Column('documents_count', sa.Integer(),
+                  server_default=u'0', nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_table(
         'cross',
         sa.Column('id', sa.String(length=40), nullable=False),
         sa.Column('project_id', sa.String(length=40), nullable=False),
-        sa.Column('is_start', sa.Boolean(), server_default=u'false', nullable=False),
-        sa.Column('is_end', sa.Boolean(), server_default=u'false', nullable=False),
+        sa.Column('is_start', sa.Boolean(),
+                  server_default='false', nullable=False),
+        sa.Column('is_end', sa.Boolean(),
+                  server_default='false', nullable=False),
         sa.Column('date_created', sa.DateTime(timezone=True),
                   server_default=sa.func.current_timestamp(), nullable=True),
         sa.PrimaryKeyConstraint('id')
@@ -190,8 +204,10 @@ def upgrade():
         sa.Column('admin_user_id', sa.String(length=40), nullable=False),
         sa.Column('date_created', sa.DateTime(timezone=True),
                   server_default=sa.func.current_timestamp(), nullable=True),
-        sa.Column('staffs_count', sa.Integer(), server_default=u'0', nullable=False),
-        sa.Column('projects_count', sa.Integer(), server_default=u'0', nullable=False),
+        sa.Column('staffs_count', sa.Integer(),
+                  server_default=u'0', nullable=False),
+        sa.Column('projects_count', sa.Integer(),
+                  server_default=u'0', nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_table(
@@ -235,3 +251,4 @@ def downgrade():
     sa.Sequence('company_id_seq').drop(bind=op.get_bind())
     sa.Sequence('document_id_seq').drop(bind=op.get_bind())
     sa.Sequence('email_temp_id_seq').drop(bind=op.get_bind())
+    ENUM(name='user_gender_enum').drop(op.get_bind(), checkfirst=False)

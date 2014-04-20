@@ -2,26 +2,21 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-import random
 import contextlib
 import threading
 
-from functools import partial
-
-from flask import g, request
-from flask.helpers import locked_cached_property
+from flask import request
 from sqlalchemy import orm, sql, types, exc
-from sqlalchemy.util import OrderedDict, to_list
+from sqlalchemy.util import to_list
 from sqlalchemy.orm import attributes, loading
 from sqlalchemy.ext.compiler import compiles
-from flask.ext.sqlalchemy import (SQLAlchemy, _SignallingSession,
-                                  _EngineConnector, get_state, BaseQuery)
+from flask.ext.sqlalchemy import (
+    SQLAlchemy, _SignallingSession, BaseQuery)
 from flask.ext import sqlalchemy as flask_sqlalchemy
 
 
 from . import types as custom_types
 from . import mutable as custom_mutable
-from . import hybrid as custom_hybrid
 
 __all__ = ['SQLAlchemy']
 
@@ -150,8 +145,8 @@ imsafe = threading.local()
 
 @compiles(current_user_id)
 def default_current_user_id(element, compiler, **kw):
-    user_id = getattr(imsafe, '_db_current_user_id', request.user_id
-                   if request else None)
+    user_id = getattr(imsafe, '_db_current_user_id',
+                      request.user_id if request else None)
     return compiler.process(sql.bindparam('current_user_id', user_id))
 
 

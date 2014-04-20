@@ -21,42 +21,47 @@ class TaskModel(db.Model):
         'id',
         db.String(40), nullable=False,
         primary_key=True, default=generators.task)
-    is_ready = db.Column(
-        'is_ready',
-        db.Boolean(), nullable=False,
-        server_default='false')
-    is_finished = db.Column(
-        'is_finished',
-        db.Boolean(), nullable=False,
-        server_default='false')
-    progress = db.Column(
-        'progress',
-        db.Integer(), nullable=False,
-        server_default='0')
     user_id = db.Column(
         'user_id',
         db.String(40), nullable=False)
     project_id = db.Column(
         'project_id',
-        db.String(40), nullable=False,
-        primary_key=True)
+        db.String(40), nullable=False)
     name = db.Column(
         'name',
         db.Unicode(256), nullable=False)
     description = db.Column(
         'description',
-        db.Unicode(256), nullable=True)
+        db.Unicode(256), nullable=True,
+        server_default='')
+    is_ready = db.Column(
+        'is_ready',
+        db.Boolean(), nullable=False,
+        default=False,
+        server_default='false')
+    is_finished = db.Column(
+        'is_finished',
+        db.Boolean(), nullable=False,
+        default=False,
+        server_default='false')
+    progress = db.Column(
+        'progress',
+        db.Integer(), nullable=False,
+        server_default='0')
     date_start = db.Column(
         'date_start',
         db.DateTime(timezone=True),
+        nullable=False,
         server_default=db.func.current_timestamp())
     date_end = db.Column(
         'date_end',
         db.DateTime(timezone=True),
+        nullable=False,
         server_default=db.func.current_timestamp())
     date_created = db.Column(
         'date_created',
         db.DateTime(timezone=True),
+        nullable=False,
         server_default=db.func.current_timestamp())
 
     @classmethod
@@ -171,7 +176,7 @@ class DocumentModel(db.Model):
         'date_created',
         db.DateTime(timezone=True),
         server_default=db.func.current_timestamp())
-    
+
 
 class TaskOutCrossModel(db.Model):
     __tablename__ = 'task_out_cross'

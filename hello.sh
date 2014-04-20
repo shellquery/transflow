@@ -34,7 +34,8 @@ function install() {
     easy_install readline
     pip install ipython
     pip install anyjson
-    pip install iptools
+    easy_install line-profiler
+    pip install memory-profiler 
 }
 
 function cdvirtual() {
