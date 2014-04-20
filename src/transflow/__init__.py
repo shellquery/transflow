@@ -10,6 +10,7 @@ app.static_folder = 'static'
 with app.app_context():
     from transflow.core import config_loader
     config_loader.load('transflow.config')
+    app.init()
     from . import views  # noqa
     from .blueprints import blueprint_www
     app.register_blueprint(blueprint_www, subdomain='www')

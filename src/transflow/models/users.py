@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from flask import current_app as app
+from flask import current_app as app, url_for
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from transflow.core.engines import db
@@ -13,6 +13,7 @@ from .properties import extend_properties
 
 
 __all__ = ['UserModel', 'EmailTempModel']
+
 
 @extend_properties
 class UserModel(db.Model):
@@ -79,6 +80,12 @@ class EmailTempModel(db.Model):
                              server_default=db.func.current_timestamp(),
                              nullable=False,
                              index=True)
+
+    @property
+    def url(self):
+        return url_for('account.confirm_email',
+                       email=self.email, random_code=self.random_code,
+                       _external=True)
 
     @hybrid_property
     def email_insensitive(self):

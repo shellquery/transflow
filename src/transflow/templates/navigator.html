@@ -1,0 +1,12 @@
+{% macro navitem(endpoint, label) %}
+<li {% if request.endpoint == endpoint %}class="active"{% endif %}>
+<a href="{{ url_for(endpoint) }}">{{ label }}</a>
+</li>
+{% endmacro %}
+<div class="header">
+    <ul class="nav nav-pills pull-right">
+        {{ navitem('home.index', '首页') }}
+        {{ navitem('home.contact', '联系我们') }}
+    </ul>
+    <h2 class="text-muted">译流网</h2>
+</div>

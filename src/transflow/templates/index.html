@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="jumbotron welcome-board">
+    <h2>欢迎来到译流网</h2>
+    <p>
+    译流网是全世界最好用的翻译管理平台，在这里你可以广泛结交翻译届的朋友，
+    管理自己的翻译项目，寻找形形色色的翻译资源，记录下翻译生涯的点点滴滴，
+    祝你在这里玩的愉快。
+    </p>
+    <div class="control">
+        <a class="btn btn-lg btn-success" href="{{ url_for('account.login') }}">登录</a> 
+    </div>
+</div>
+
+{% endblock %}

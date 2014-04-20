@@ -67,6 +67,7 @@ class FillEmailView(views.MethodView):
         db.session.add(email_temp)
         db.session.commit()
         self.send_email(email_temp=email_temp)
+        session['email_temp_id'] = email_temp.id
         return redirect(url_for('.send_email_success'))
 
     def send_email(self, email_temp):
@@ -77,7 +78,13 @@ class SendEmailSuccessView(views.MethodView):
     template = 'account/send_email_success.html'
 
     def get(self):
-        return render_template(self.template)
+        if 'email_temp_id' not in session:
+            return redirect(url_for('home.index'))
+        temp_id = session['email_temp_id']
+        email_temp = EmailTempModel.query.get(temp_id)
+        if not email_temp:
+            return redirect(url_for('home.index'))
+        return render_template(self.template, email_temp=email_temp)
 
 
 class ConfirmEmailView(views.MethodView):
@@ -88,7 +95,7 @@ class ConfirmEmailView(views.MethodView):
         random_code = fields.StringField(
             'random_code', validators=[validators.Required()])
 
-        def validate(self):
+        def validate_random_code(self, field):
             et = self.email_temp
             if not et:
                 raise ValidationError('非法的验证请求')
@@ -97,7 +104,7 @@ class ConfirmEmailView(views.MethodView):
         def email_temp(self):
             return (
                 EmailTempModel.query
-                .filter(EmailTempModel.email == self.email.data)
+                .filter(EmailTempModel.email_insensitive == self.email.data)
                 .filter(EmailTempModel.random_code == self.random_code.data)
                 .first())
 
@@ -106,8 +113,7 @@ class ConfirmEmailView(views.MethodView):
         if not form.validate():
             raise Forbidden('非法的验证请求')
         email_temp = form.email_temp
-        flash('邮箱验证已通过，继续注册流程')
-        return redirect(url_for('.register', eid=email_temp.id))
+        return redirect(url_for('.register', temp_id=email_temp.id))
 
 
 class RSAFormMixin(object):
@@ -177,18 +183,20 @@ class RegisterView(views.MethodView):
     class RegisterForm(Form, RSAPasswordFormMixin):
         realname = fields.StringField(
             '姓名',
+            description='输入真实姓名',
             validators=[validators.Required(),
                         PinyinLength(min=2)])
         gender = fields.RadioField(
             '性别',
-            choices=[('male', '男'), ('female', '女'), ('unknown', '不明')],
+            choices=[('male', '男'), ('female', '女')],
             validators=[validators.Required()])
-        introduction = fields.StringField(
+        introduction = fields.TextAreaField(
             '介绍',
+            description='简短地写点什么介绍下自己吧',
             validators=[validators.Required()])
 
-    def get(self, eid):
-        et = EmailTempModel.query.get(eid)
+    def get(self, temp_id):
+        et = EmailTempModel.query.get(temp_id)
         if not et:
             raise Forbidden('邮箱已经被抢注了')
         form = self.RegisterForm()
@@ -214,7 +222,6 @@ class RegisterView(views.MethodView):
             introduction=introduction,
             email=et.email,
             password_hash=password_hash)
-        flash('注册成功')
         response = redirect(url_for('home.index'))
         make_login(response, user)
         return response
@@ -315,12 +322,12 @@ blueprint.add_url_rule(
     view_func=FillEmailView.as_view(b'fill_email'))
 blueprint.add_url_rule(
     '/send_email_success/',
-    view_func=RegisterView.as_view(b'send_email_success'))
+    view_func=SendEmailSuccessView.as_view(b'send_email_success'))
 blueprint.add_url_rule(
     '/confirm_email/',
     view_func=ConfirmEmailView.as_view(b'confirm_email'))
 blueprint.add_url_rule(
-    '/register/',
+    '/register/<tkey:temp_id>/',
     view_func=RegisterView.as_view(b'register'))
 blueprint.add_url_rule(
     '/login/',

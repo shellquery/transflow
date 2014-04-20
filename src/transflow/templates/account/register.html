@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="{{ static_for('styles/account.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-4 col-md-4 register">
+        <form method="POST" class="form-horizontal">
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                    {{ form.realname(placeholder=form.realname.description, class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group gender-input">
+                    {{ form.gender(class="radio") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                    {{ form.introduction(placeholder=form.introduction.description, rows=4, class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                    <input type="password" placeholder="输入密码" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                    <input type="password" placeholder="再次输入密码" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-success">进入</button> 
+                    </div>
+                </div>
+            </div>
+            {{ form.pubkey }}
+            {{ form.form_id }}
+        </form>
+    </div>
+</div>
+{% endblock %}

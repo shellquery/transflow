@@ -9,6 +9,7 @@ from flask.wrappers import Request
 from transflow.core.session import RedisSessionInterface
 from transflow.core.static import static_for
 from transflow.core.engines import redis, mail
+from transflow.core.converters import addition_converters
 
 
 class TransflowRequest(Request):
@@ -39,5 +40,8 @@ class TransflowFlask(Flask):
         super(TransflowFlask, self).__init__(*args, **kwargs)
         funcs = dict(static_for=static_for)
         self.jinja_env.globals.update(funcs)
+        self.url_map.converters.update(addition_converters)
+
+    def init(self):
         redis.init_app(self)
         mail.init_app(self)

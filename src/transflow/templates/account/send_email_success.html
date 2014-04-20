@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="{{ static_for('styles/account.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-2 col-md-7 send-email-success">
+        <div class="well">
+            <p>我们已经向你的邮箱{{ email_temp.email }}发送了一封验证邮件，请前去邮箱点击验证链接后继续注册流程。</p>
+            <div class="pull-right">
+                <a class="btn btn-sm btn-success" href="{{ url_for('home.index') }}">回首页</a></p>
+            </div>
+            <div class="clearfix"></div> 
+        </div>
+    </div>
+</div>
+{% endblock %}
