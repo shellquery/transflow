@@ -13,9 +13,9 @@ from transflow.core.engines import mail
 def send(recipients, key, **context):
     if isinstance(recipients, basestring):
         recipients = [recipients]
-    template = 'email/%s' % key
+    template = 'email/%s.html' % key
     html = render_template(template, **context)
-    pq = PyQuery(str(html))
+    pq = PyQuery(html)
     title = pq('title').html()
     content = pq('content').html()
     msg = Message(title, recipients=recipients)

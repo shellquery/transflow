@@ -16,18 +16,13 @@ class EngineModule(ModuleType):
     def db(self):
         from flask import current_app
         from transflow.core.sqlalchemy import SQLAlchemy
-        try:
-            result = SQLAlchemy(current_app)
-        except Exception, ex:
-            import traceback
-            traceback.print_exc()
+        result = SQLAlchemy(current_app)
         return result
 
     @locked_cached_property
     def redis(self):
-        from flask import current_app
         from flask.ext.redis import Redis
-        return Redis(current_app)
+        return Redis()
 
     @locked_cached_property
     def mail(self):

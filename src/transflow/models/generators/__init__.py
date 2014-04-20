@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from types import ModuleType
 
-from transflow.core.engines import db
 from transflow.core.utils import make_module
 
 
@@ -27,6 +26,7 @@ class GeneratorModule(ModuleType):
         return super(GeneratorModule, self).__getattr__(key)
 
     def nextorigid(self, key):
+        from transflow.core.engines import db
         return db.session.execute(db.Sequence('%s_id_seq' % key))
 
     def nextval(self, key):
@@ -37,6 +37,6 @@ class GeneratorModule(ModuleType):
         return pad_left(base62.base62_encode(fei.encrypt(orig_id)))
 
     def generator(self, key):
-        return lambda : self.nextval(key)
+        return lambda: self.nextval(key)
 
 make_module(GeneratorModule, __name__)

@@ -140,7 +140,7 @@ module.exports = function (grunt) {
                     dir: '<%= yeoman.dist %>/scripts',
                     optimize: 'none',
                     modules: [
-                        {name: 'account/fillemail'}
+                        {name: 'account'}
                     ],
                     keepBuildDir: true,
                     preserveLicenseComments: false,
@@ -287,6 +287,19 @@ module.exports = function (grunt) {
         'mocha'
     ]);
 
+    grunt.registerTask('dev', [
+        'clean:dist',
+        'useminPrepare',
+        'concurrent:dist',
+        'autoprefixer',
+        'requirejs',
+        'concat',
+        'cssmin',
+        'uglify',
+        'copy:dist',
+        'usemin'
+    ]);
+
     grunt.registerTask('build', [
         'clean:dist',
         'useminPrepare',
@@ -296,7 +309,6 @@ module.exports = function (grunt) {
         'concat',
         'cssmin',
         'uglify',
-        'modernizr',
         'copy:dist',
         'rev',
         'usemin'

@@ -1,4 +1,43 @@
-<form method="POST">
-    {{ form.email(placeholder=form.email.description) }}
-    {{ form.password(placeholder=form.password.decription) }}
-</form>
+{% extends "base.html" %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="{{ static_for('styles/account.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-4 col-md-3 login">
+        <form method="POST" class="form-horizontal">
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                    {{ form.email(placeholder=form.email.description, class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                    <input type="password" placeholder="密码" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-2 col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-success">进入</button> 
+                    </div>
+                </div>
+                <div class="col-md-offset-4 col-md-2">
+                    <div class="form-group">
+                        <a class="btn btn-link pull-right" href="{{ url_for('account.fill_email') }}">注册</button> 
+                    </div>
+                </div>
+            </div>
+            {{ form.pubkey }}
+            {{ form.form_id }}
+        </form>
+    </div>
+</div>
+{% endblock %}

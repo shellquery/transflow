@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from flask import Flask
+
 from flask.helpers import locked_cached_property
 from flask.wrappers import Request
+
+from transflow.core.session import RedisSessionInterface
+from transflow.core.static import static_for
+from transflow.core.engines import redis, mail
 
 
 class TransflowRequest(Request):
@@ -23,3 +29,15 @@ class TransflowRequest(Request):
             return {}
         user = user_meta(user_id)
         return user
+
+
+class TransflowFlask(Flask):
+    request_class = TransflowRequest
+    session_interface = RedisSessionInterface(redis)
+
+    def __init__(self, *args, **kwargs):
+        super(TransflowFlask, self).__init__(*args, **kwargs)
+        funcs = dict(static_for=static_for)
+        self.jinja_env.globals.update(funcs)
+        redis.init_app(self)
+        mail.init_app(self)

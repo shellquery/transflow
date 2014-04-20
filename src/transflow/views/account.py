@@ -18,7 +18,8 @@ from werkzeug.exceptions import Forbidden
 from wtforms import fields, validators, ValidationError
 from wtforms.fields import html5
 
-from transflow.core.engines import mail, redis, db
+from transflow.core import mail
+from transflow.core.engines import redis, db
 from transflow.core.signature import shake, decrypt
 from transflow.core.decorators import login_required
 from transflow.core.tokens import AccessToken
@@ -37,7 +38,9 @@ class FillEmailView(views.MethodView):
 
     class FillEmailForm(Form):
         email = html5.EmailField(
-            'email', validators=[validators.Required()])
+            '邮箱',
+            description='输入你的邮箱',
+            validators=[validators.Required()])
 
         def validate_email(self, field):
             email = field.data
@@ -64,11 +67,17 @@ class FillEmailView(views.MethodView):
         db.session.add(email_temp)
         db.session.commit()
         self.send_email(email_temp=email_temp)
-        flash('验证邮件已经发送到您的邮箱，请查收')
-        return redirect(url_for('.fill'))
+        return redirect(url_for('.send_email_success'))
 
     def send_email(self, email_temp):
         mail.send(email_temp.email, 'validate_email', email_temp=email_temp)
+
+
+class SendEmailSuccessView(views.MethodView):
+    template = 'account/send_email_success.html'
+
+    def get(self):
+        return render_template(self.template)
 
 
 class ConfirmEmailView(views.MethodView):
@@ -102,10 +111,10 @@ class ConfirmEmailView(views.MethodView):
 
 
 class RSAFormMixin(object):
-    form_id = fields.StringField(
+    form_id = fields.HiddenField(
         '表单ID',
         validators=[validators.Required()])
-    pubkey = fields.StringField(
+    pubkey = fields.HiddenField(
         '公钥',
         validators=[validators.Required()])
 
@@ -135,7 +144,7 @@ class RSAFormMixin(object):
 
 
 class RSAPasswordFormMixin(RSAFormMixin):
-    password_encrypt = fields.PasswordField(
+    password_encrypt = fields.StringField(
         '加密密码',
         validators=[validators.Required()])
 
@@ -217,7 +226,9 @@ class LoginView(views.MethodView):
 
     class LoginForm(Form, RSAPasswordFormMixin):
         email = html5.EmailField(
-            'email', validators=[validators.Required()])
+            '邮箱',
+            description='输入邮箱',
+            validators=[validators.Required()])
 
         def validate(self):
             super(LoginForm, self).validate()  # noqa
@@ -260,7 +271,7 @@ class ChangePasswordView(views.MethodView):
     template = 'account/change_password.html'
 
     class ChangePasswordForm(Form, RSAPasswordFormMixin):
-        new_password_encrypt = fields.PasswordField(
+        new_password_encrypt = fields.StringField(
             '加密新密码',
             validators=[validators.Required()])
 
@@ -300,17 +311,20 @@ class ChangePasswordView(views.MethodView):
 
 
 blueprint.add_url_rule(
-    '/fill_email',
+    '/fill_email/',
     view_func=FillEmailView.as_view(b'fill_email'))
 blueprint.add_url_rule(
-    '/confirm_email',
+    '/send_email_success/',
+    view_func=RegisterView.as_view(b'send_email_success'))
+blueprint.add_url_rule(
+    '/confirm_email/',
     view_func=ConfirmEmailView.as_view(b'confirm_email'))
 blueprint.add_url_rule(
-    '/register',
+    '/register/',
     view_func=RegisterView.as_view(b'register'))
 blueprint.add_url_rule(
-    '/login',
+    '/login/',
     view_func=LoginView.as_view(b'login'))
 blueprint.add_url_rule(
-    '/change_password',
+    '/change_password/',
     view_func=RegisterView.as_view(b'change_password'))
