@@ -120,31 +120,31 @@ class RSAFormMixin(object):
     form_id = fields.HiddenField(
         '表单ID',
         validators=[validators.Required()])
-    pubkey = fields.HiddenField(
+    pubic_key = fields.HiddenField(
         '公钥',
         validators=[validators.Required()])
 
     RSA_PREFIX = 'RSA-FORM-KEY'
 
     @locked_cached_property
-    def privkey(self):
+    def private_key(self):
         form_id = self.form_id.data
-        pubkey = self.pubkey.data
-        rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, pubkey)
-        privkey = redis.get(rsakey)
-        return privkey
+        public_key = self.public_key.data
+        rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, public_key)
+        private_key = redis.get(rsakey)
+        return private_key
 
-    def validate_pubkey(self, field):
-        if not self.privkey:
+    def validate_pubic_key(self, field):
+        if not self.private_key:
             raise ValidationError('表单已过期')
 
     def process(self, formdata=None, obj=None, **kwargs):
         if not self.is_submitted():
             form_id = base64.b32encode(os.random(20))
-            pubkey, privkey = shake()
-            rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, pubkey)
-            redis.setex(rsakey, 600, privkey)
-            kwargs.update(form_id=form_id, pubkey=pubkey)
+            public_key, private_key = shake()
+            rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, public_key)
+            redis.setex(rsakey, 600, private_key)
+            kwargs.update(form_id=form_id, pubic_key=public_key)
         super(RSAFormMixin, self).process(
             formdata=formdata, obj=obj, **kwargs)
 
@@ -205,8 +205,8 @@ class RegisterView(views.MethodView):
     def error(self, et, form):
         return render_template(self.template, form=form, email_temp=et), 400
 
-    def post(self, eid):
-        et = EmailTempModel.query.get(eid)
+    def post(self, temp_id):
+        et = EmailTempModel.query.get(temp_id)
         if not et:
             raise Forbidden('邮箱已经被抢注了')
         form = self.RegisterForm(request.values)

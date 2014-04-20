@@ -8,11 +8,14 @@
 {% block content %}
 <div class="row">
     <div class="col-md-offset-4 col-md-4 register">
-        <form method="POST" class="form-horizontal">
+        <form method="POST" class="form-horizontal" id="register-form">
             <div class="row">
                 <div class="col-md-offset-2 col-md-8">
                     <div class="form-group">
                     {{ form.realname(placeholder=form.realname.description, class="form-control") }}
+                    {% if form.realname.errors %}
+                    <p class="text-danger">{{ form.realname.errors }}</p>
+                    {% endif %}
                     </div>
                 </div>
             </div>
@@ -27,6 +30,9 @@
                 <div class="col-md-offset-2 col-md-8">
                     <div class="form-group">
                     {{ form.introduction(placeholder=form.introduction.description, rows=4, class="form-control") }}
+                    {% if form.introduction.errors %}
+                    <p class="text-danger">{{ form.introduction.errors }}</p>
+                    {% endif %}
                     </div>
                 </div>
             </div>
@@ -51,8 +57,9 @@
                     </div>
                 </div>
             </div>
-            {{ form.pubkey }}
+            {{ form.public_key }}
             {{ form.form_id }}
+            {{ form.csrf_token }}
         </form>
     </div>
 </div>

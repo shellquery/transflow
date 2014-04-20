@@ -8,7 +8,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-offset-4 col-md-3 login">
-        <form method="POST" class="form-horizontal">
+        <form method="POST" class="form-horizontal" id="login-form">
             <div class="row">
                 <div class="col-md-offset-2 col-md-8">
                     <div class="form-group">
@@ -35,8 +35,9 @@
                     </div>
                 </div>
             </div>
-            {{ form.pubkey }}
+            {{ form.public_key }}
             {{ form.form_id }}
+            {{ form.csrf_token }}
         </form>
     </div>
 </div>
