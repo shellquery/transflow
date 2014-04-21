@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 
-import re
 import types
 import string
 import os.path
@@ -72,6 +71,7 @@ class PinYin(types.ModuleType):
         多个空格转成一个空格
         去掉首位空格
         '''
+        import re
         chars = []
         for c in word:
             key = '%X' % ord(c)

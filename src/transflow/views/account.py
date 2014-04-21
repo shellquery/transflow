@@ -116,15 +116,10 @@ class ConfirmEmailView(views.MethodView):
         return redirect(url_for('.register', temp_id=email_temp.id))
 
 
-class RSAFormMixin(object):
-    form_id = fields.HiddenField(
-        '表单ID',
-        validators=[validators.Required()])
-    pubic_key = fields.HiddenField(
+class RSAForm(Form):
+    public_key = fields.HiddenField(
         '公钥',
         validators=[validators.Required()])
-
-    RSA_PREFIX = 'RSA-FORM-KEY'
 
     @locked_cached_property
     def private_key(self):
@@ -134,23 +129,23 @@ class RSAFormMixin(object):
         private_key = redis.get(rsakey)
         return private_key
 
-    def validate_pubic_key(self, field):
+    def validate_public_key(self, field):
         if not self.private_key:
             raise ValidationError('表单已过期')
 
     def process(self, formdata=None, obj=None, **kwargs):
         if not self.is_submitted():
-            form_id = base64.b32encode(os.random(20))
+            form_id = base64.b32encode(os.urandom(20))
             public_key, private_key = shake()
             rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, public_key)
-            redis.setex(rsakey, 600, private_key)
-            kwargs.update(form_id=form_id, pubic_key=public_key)
-        super(RSAFormMixin, self).process(
+            redis.setex(rsakey, private_key, 600)
+            kwargs.update(form_id=form_id, public_key=public_key)
+        super(RSAForm, self).process(
             formdata=formdata, obj=obj, **kwargs)
 
 
-class RSAPasswordFormMixin(RSAFormMixin):
-    password_encrypt = fields.StringField(
+class RSAPasswordForm(RSAForm):
+    password_encrypt = fields.HiddenField(
         '加密密码',
         validators=[validators.Required()])
 
@@ -180,7 +175,7 @@ class RegisterView(views.MethodView):
 
     template = 'account/register.html'
 
-    class RegisterForm(Form, RSAPasswordFormMixin):
+    class RegisterForm(RSAPasswordForm):
         realname = fields.StringField(
             '姓名',
             description='输入真实姓名',
@@ -231,7 +226,7 @@ class LoginView(views.MethodView):
 
     template = 'account/login.html'
 
-    class LoginForm(Form, RSAPasswordFormMixin):
+    class LoginForm(RSAPasswordForm):
         email = html5.EmailField(
             '邮箱',
             description='输入邮箱',
@@ -277,7 +272,7 @@ class ChangePasswordView(views.MethodView):
 
     template = 'account/change_password.html'
 
-    class ChangePasswordForm(Form, RSAPasswordFormMixin):
+    class ChangePasswordForm(RSAPasswordForm):
         new_password_encrypt = fields.StringField(
             '加密新密码',
             validators=[validators.Required()])

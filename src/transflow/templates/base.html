@@ -23,5 +23,7 @@
     </div>
 
   </body>
-  {% block scripts %}{% endblock %}
+  {% block scripts %}
+  <script type='text/javascript' src="{{ static_for('scripts/core.js') }}"></script>
+  {% endblock %}
 </html>

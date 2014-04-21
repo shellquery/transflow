@@ -14,7 +14,7 @@
                     <div class="form-group">
                     {{ form.realname(placeholder=form.realname.description, class="form-control") }}
                     {% if form.realname.errors %}
-                    <p class="text-danger">{{ form.realname.errors }}</p>
+                    <p class="text-danger">{{ form.realname.errors[0] }}</p>
                     {% endif %}
                     </div>
                 </div>
@@ -29,9 +29,9 @@
             <div class="row">
                 <div class="col-md-offset-2 col-md-8">
                     <div class="form-group">
-                    {{ form.introduction(placeholder=form.introduction.description, rows=4, class="form-control") }}
+                    {{ form.introduction(placeholder=form.introduction.description, rows=10, class="form-control") }}
                     {% if form.introduction.errors %}
-                    <p class="text-danger">{{ form.introduction.errors }}</p>
+                    <p class="text-danger">{{ form.introduction.errors[0] }}</p>
                     {% endif %}
                     </div>
                 </div>
@@ -39,14 +39,14 @@
             <div class="row">
                 <div class="col-md-offset-2 col-md-8">
                     <div class="form-group">
-                    <input type="password" placeholder="输入密码" class="form-control">
+                    <input type="password" id="first_password" placeholder="输入密码" class="form-control">
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-offset-2 col-md-8">
                     <div class="form-group">
-                    <input type="password" placeholder="再次输入密码" class="form-control">
+                    <input type="password" id="second_password" placeholder="再次输入密码" class="form-control">
                     </div>
                 </div>
             </div>
@@ -58,9 +58,14 @@
                 </div>
             </div>
             {{ form.public_key }}
+            {{ form.password_encrypt }}
             {{ form.form_id }}
             {{ form.csrf_token }}
         </form>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type='text/javascript' src='{{ static_for('scripts/account.js') }}'></script>
 {% endblock %}

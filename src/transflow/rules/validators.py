@@ -53,7 +53,7 @@ class PinyinLength(Length):
                         % (self.min, self.max))
                 elif self.min > 0:
                     self.message = (
-                        '非法的名称，必须至少%s英文单词数字或汉字'
+                        '非法的名称，必须至少%s个英文单词数字或汉字'
                         % self.min)
                 elif self.max > 0:
                     self.message = (
