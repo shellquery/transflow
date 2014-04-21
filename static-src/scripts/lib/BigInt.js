@@ -625,6 +625,7 @@ define(function(){
 
     var exports = {
         BigInt:BigInt,
+        setMaxDigits:setMaxDigits,
         biFromDecimal:biFromDecimal,
         biCopy:biCopy,
         biFromNumber:biFromNumber,
@@ -635,7 +636,7 @@ define(function(){
         charToHex:charToHex,
         hexToDigit:hexToDigit,
         biFromHex:biFromHex,
-        biFronString:biFromString,
+        biFromString:biFromString,
         biAdd:biAdd,
         biSubtract:biSubtract,
         biHighIndex:biHighIndex,

@@ -14,6 +14,7 @@
 // dave@ohdave.com 
 
 define(['lib/BigInt', 'lib/Barrett'], function(BI, Barrett) {
+    BI.setMaxDigits(100);
     function RSAKeyPair(encryptionExponent, decryptionExponent, modulus)
     {
         this.e = BI.biFromHex(encryptionExponent);
@@ -25,7 +26,7 @@ define(['lib/BigInt', 'lib/Barrett'], function(BI, Barrett) {
         // already been subtracted.
         this.chunkSize = 2 * BI.biHighIndex(this.m);
         this.radix = 16;
-        this.barrett = new BarrettMu(this.m);
+        this.barrett = new Barrett(this.m);
         this.encrypt = encryptedString;
         this.decrypt = decryptedString;
     }

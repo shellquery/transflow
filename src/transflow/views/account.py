@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import os
 import md5
+import json
 import base64
 from datetime import datetime
 
@@ -20,7 +21,7 @@ from wtforms.fields import html5
 
 from transflow.core import mail
 from transflow.core.engines import redis, db
-from transflow.core.signature import shake, decrypt
+from transflow.core.signature import shake, decrypt, freeze, restore
 from transflow.core.decorators import login_required
 from transflow.core.tokens import AccessToken
 from transflow.blueprints import blueprint_www
@@ -117,17 +118,25 @@ class ConfirmEmailView(views.MethodView):
 
 
 class RSAForm(Form):
+    key_id = fields.HiddenField(
+        'key_id',
+        validators=[validators.Required()])
     public_key = fields.HiddenField(
         '公钥',
         validators=[validators.Required()])
 
+    RSA_PREFIX = 'PASSWORD-FORM'
+
     @locked_cached_property
     def private_key(self):
-        form_id = self.form_id.data
-        public_key = self.public_key.data
-        rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, public_key)
-        private_key = redis.get(rsakey)
-        return private_key
+        key_id = self.key_id.data
+        en = self.public_key.data.split('-')
+        rsakey = '%s:%s' % (self.RSA_PREFIX, key_id)
+        keypair = redis.get(rsakey)
+        if keypair and len(en) == 2:
+            public_key, private_key = restore(keypair)
+            if public_key.e == int(en[0]) and public_key.n == int('0x' + en[1], 16):
+                return private_key
 
     def validate_public_key(self, field):
         if not self.private_key:
@@ -135,17 +144,17 @@ class RSAForm(Form):
 
     def process(self, formdata=None, obj=None, **kwargs):
         if not self.is_submitted():
-            form_id = base64.b32encode(os.urandom(20))
-            public_key, private_key = shake()
-            rsakey = '%s:%s:%s' % (self.RSA_PREFIX, form_id, public_key)
-            redis.setex(rsakey, private_key, 600)
-            kwargs.update(form_id=form_id, public_key=public_key)
+            key_id = base64.b32encode(os.urandom(20))
+            public_key, private_key = pair = shake()
+            rsakey = '%s:%s' % (self.RSA_PREFIX, key_id)
+            redis.setex(rsakey, freeze(pair), 600)
+            kwargs.update(key_id=key_id, public_key='%s-%s' % (public_key.e, hex(public_key.n)[2:-1]))
         super(RSAForm, self).process(
             formdata=formdata, obj=obj, **kwargs)
 
 
 class RSAPasswordForm(RSAForm):
-    password_encrypt = fields.HiddenField(
+    password_encrypted = fields.HiddenField(
         '加密密码',
         validators=[validators.Required()])
 
@@ -153,7 +162,8 @@ class RSAPasswordForm(RSAForm):
 
     @locked_cached_property
     def password_hash(self):
-        password = decrypt(self.password_encrypt.data, self.privkey)
+        password_bytes = ''.join([chr(int(x, 16)) for x in self.password_encrypted.data])
+        password = decrypt(password_bytes, self.private_key)
         return md5(password + self.salt)
 
 
@@ -204,7 +214,7 @@ class RegisterView(views.MethodView):
         et = EmailTempModel.query.get(temp_id)
         if not et:
             raise Forbidden('邮箱已经被抢注了')
-        form = self.RegisterForm(request.values)
+        form = self.RegisterForm(request.form)
         if not form.validate():
             return self.error(et, form)
         realname = form.realname.data
